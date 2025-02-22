@@ -58,8 +58,9 @@ class RequestHandler(BaseHTTPRequestHandler):
             query = parse_qs(parsed.query)
             url_dict["query_params"] = query
             try:
-                pk = int(query["pk"][0])
-                url_dict["pk"] = pk
+                if "pk" in url_dict["query_params"]:
+                    pk = int(query["pk"][0])
+                    url_dict["pk"] = pk
             except (IndexError, ValueError):
                 pass
               
