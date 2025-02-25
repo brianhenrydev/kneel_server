@@ -6,8 +6,8 @@ class OrderQuery(SqlQuery):
         self.table = "Orders"
         super().__init__(self.table, request_method)
 
-    def add_item(self,metal_id,style_id,size_id):
-        """Adds an item to database table"""
+    def add_order(self,metal_id,style_id,size_id):
+        """Adds an Order to Orders table"""
         with sqlite3.connect("./kneeldiamonds.db") as conn:
             db_cursor = conn.cursor()
             try:
@@ -279,7 +279,7 @@ def get_single_order(pk):
 def create_order(new_order):
     query = OrderQuery("Orders")
     query.set_method("post")
-    return query.add_item(
+    return query.add_order(
         metal_id=new_order["metal_id"],
         style_id=new_order["style_id"],
         size_id=new_order["size_id"]

@@ -65,4 +65,3 @@ class SqlQuery():
             {request_method} isn't a valid method
             Please use one of these {self.supported_methods}
             """
-            
