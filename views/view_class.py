@@ -8,23 +8,22 @@ class SqlQuery():
         self.supported_methods = ["get", "post", "put", "delete"]
 
 
-    def get_table(self):
+    def get_table(self,):
         """gets all items in table"""
         if not self.expand_query:
             with sqlite3.connect("./kneeldiamonds.db") as conn:
                 conn.row_factory = sqlite3.Row
                 db_cursor = conn.cursor()
-
                 db_cursor.execute(f"""
                 SELECT * FROM {self.table}
                 """)
                 query_results = db_cursor.fetchall()
-     
+         
                 docks=[]
                 for row in query_results:
                     docks.append(dict(row))
-
-     
+    
+         
                 serialized_docks = json.dumps(docks)
                 return serialized_docks
         else:

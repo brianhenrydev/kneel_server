@@ -38,9 +38,8 @@ class JSONServer(RequestHandler):
         query_params = url["query_params"]
 
         if url["requested_resource"] == "orders":
-
             if "pk" not in query_params:
-                response_body = get_all_orders()
+                response_body = get_all_orders(url)
                 return self.response(response_body, status.HTTP_200_SUCCESS.value)
             else:
                 pk = query_params["pk"]
