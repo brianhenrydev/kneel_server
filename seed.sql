@@ -1,3 +1,30 @@
+/*
+
+tables: [
+  metals: {
+    metal:  "Sterling Silver","14K Gold", "24K Gold", "Platinum","Palladium"
+    price: 12.42,736.4,1258.9,795.45,1241,
+    id: int
+  },
+
+  sizes: {
+    size: 0.5,0.75,1,1.5,2,
+    price: int,
+    id: int
+  },
+
+  styles: {
+    style:  "Classic", "Modern", "Vintage",
+    price: 500,710,965,
+    id: int
+  },
+  orders: {
+    metalId: metal.id,
+    sizeId: size.id,
+    styleId: style.id
+  }
+]
+*/
 CREATE TABLE `Metals`
 (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -31,32 +58,6 @@ CREATE TABLE `Orders`
     FOREIGN KEY([style_id]) REFERENCES Styles(`id`)
 );
 
-/*
-
-tables: [
-  metals: {
-    metal:  "Sterling Silver","14K Gold", "24K Gold", "Platinum","Palladium"
-    price: 12.42,736.4,1258.9,795.45,1241,
-    id: int
-  },
-
-  sizes: {
-    size: 0.5,0.75,1,1.5,2,
-    price: int,
-    id: int
-  },
-
-  styles: {
-    style:  "Classic", "Modern", "Vintage",
-    price: 500,710,965,
-    id: int
-  },
-  orders: {
-    metalId: metal.id,
-    sizeId: size.id,
-    styleId: style.id
-  }
-]
 
 
 INSERT INTO Metals ("metal", "price") 
@@ -86,6 +87,5 @@ VALUES
 (1, 1, 1),
 (2, 2, 2),
 (3, 3, 3),
-(4, 4, 1),
-(5, 5, 2);
-*/
+(1, 3, 2),
+(1, 2, 2);

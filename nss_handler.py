@@ -28,6 +28,7 @@ class RequestHandler(BaseHTTPRequestHandler):
     def response(self,body,status_code):
         """Response"""
         self.set_res_code(status_code)
+
         self.wfile.write(body.encode())
 
     def parse_url(self,path):

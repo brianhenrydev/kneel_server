@@ -1,7 +1,12 @@
-from .view_class import SqlQuery
+from .SqlQuery import SqlQuery
+
+class StyleQuery(SqlQuery):
+    def __init__(self, request_method="get") -> None:
+        self.table = "Styles"
+        super().__init__(self.table, request_method)
 
 def get_style(pk):
-    return SqlQuery("Styles").get_item(pk)
+    return StyleQuery().get_item(pk)
 
 def get_all_styles():
-    return SqlQuery("Styles").get_table()
+    return StyleQuery().get_table()

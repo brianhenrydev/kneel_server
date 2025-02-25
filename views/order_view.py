@@ -1,9 +1,10 @@
-from .view_class import SqlQuery
+from .SqlQuery import SqlQuery
 import sqlite3,json
 
 class OrderQuery(SqlQuery):
-    def __init__(self, table, request_method="get") -> None:
-        super().__init__(table, request_method)
+    def __init__(self, request_method="get") -> None:
+        self.table = "Orders"
+        super().__init__(self.table, request_method)
 
     def add_item(self,metal_id,style_id,size_id):
         """Adds an item to database table"""
@@ -44,13 +45,22 @@ class OrderQuery(SqlQuery):
         if "_expand" not in url["query_params"]:
             return self.get_table()
         else:
-            return self.get_expanded_orders()
+            if url["query_params"]["_expand"][0] == "all":
+                return self.get_expanded_orders()
+            elif url["query_params"]["_expand"][0] == "size":
+                return  self.get_expanded_sizes()
+            elif url["query_params"]["_expand"][0] == "style":
+                return self.get_expanded_styles()
+            elif url["query_params"]["_expand"][0] == "metal":
+                return self.get_expanded_metals()
+            else:
+                return self.get_table()
 
 
 
 
     def get_expanded_orders(self):
-        """Returna a list of orders with expanded fks"""
+        """Returna a list of orders with expanded foreign keys"""
         with sqlite3.connect("./kneeldiamonds.db") as conn:
 
             conn.row_factory = sqlite3.Row
@@ -110,9 +120,146 @@ class OrderQuery(SqlQuery):
                     }
                     orders.append(order)
 
-     
-                serialized_docks = json.dumps(orders)
-                return serialized_docks
+                serialized_orders = json.dumps(orders)
+                return serialized_orders
+            except sqlite3.Error as e:
+               return f"Can't expand order\n {e}"
+
+    def get_expanded_styles(self):
+        """Returna a list of orders with expanded foreign keys"""
+        with sqlite3.connect("./kneeldiamonds.db") as conn:
+
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            try:
+                db_cursor.execute(
+                    """
+                    SELECT 
+                    o.id,
+                    o.order_placed_at,
+                    o.size_id,
+                    o.style_id,
+                    o.metal_id,
+                    st.style style_name,
+                    st.price style_price
+
+                    FROM Orders o
+
+                    JOIN Styles st ON st.id = o.style_id
+
+                    """
+                )
+                query_results = db_cursor.fetchall()
+                orders=[]
+                for row in query_results:
+                    style = {
+                        "id": row["style_id"],
+                        "style": row["style_name"],
+                        "price": row["style_price"],
+                    }
+                    order = {
+                        "id": row["id"],
+                        "metal_id": row["metal_id"],
+                        "size_id": row["size_id"],
+                        "style_id": row["style_id"],
+                        "style": style,
+                        "order_placed_at": row["order_placed_at"]
+                    }
+                    orders.append(order)
+                serialized_orders = json.dumps(orders)
+                return serialized_orders
+            except sqlite3.Error as e:
+               return f"Can't expand order\n {e}"
+    
+    def get_expanded_sizes(self):
+        """Returna a list of orders with expanded foreign keys"""
+        with sqlite3.connect("./kneeldiamonds.db") as conn:
+
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            try:
+                db_cursor.execute(
+                    """
+                    SELECT 
+                    o.id,
+                    o.order_placed_at,
+                    o.size_id,
+                    o.style_id,
+                    o.metal_id,
+                    s.size size_size,
+                    s.price size_price
+
+                    FROM Orders o
+
+                    JOIN Sizes s  ON s.id = o.size_id
+
+                    """
+                )
+                query_results = db_cursor.fetchall()
+                orders=[]
+                for row in query_results:
+                    size = {
+                        "id": row["size_id"],
+                        "size": row["size_size"],
+                        "price": row["size_price"]
+                    }
+                    order = {
+                        "id": row["id"],
+                        "metal_id": row["metal_id"],
+                        "style_id": row["style_id"],
+                        "size_id": row["size_id"],
+                        "size": size,
+                        "order_placed_at": row["order_placed_at"]
+                    }
+                    orders.append(order)
+                serialized_orders = json.dumps(orders)
+                return serialized_orders
+            except sqlite3.Error as e:
+               return f"Can't expand order\n {e}"
+
+    def get_expanded_metals(self):
+        """Returna a list of orders with expanded foreign keys"""
+        with sqlite3.connect("./kneeldiamonds.db") as conn:
+
+            conn.row_factory = sqlite3.Row
+            db_cursor = conn.cursor()
+            try:
+                db_cursor.execute(
+                    """
+                    SELECT 
+                    o.id,
+                    o.order_placed_at,
+                    o.size_id,
+                    o.style_id,
+                    o.metal_id,
+                    m.metal metal_name,
+                    m.price metal_price
+
+                    FROM Orders o
+
+                    JOIN Metals m  ON m.id = o.metal_id
+
+                    """
+                )
+                query_results = db_cursor.fetchall()
+                orders=[]
+                for row in query_results:
+                    metal = {
+                        "id": row["metal_id"],
+                        "metal": row["metal_name"],
+                        "price": row["metal_price"]
+                    }
+                    order = {
+                        "id": row["id"],
+                        "metal_id": row["metal_id"],
+                        "metal": metal,
+                        "style_id": row["style_id"],
+                        "size_id": row["size_id"],
+                        "order_placed_at": row["order_placed_at"]
+                    }
+                    orders.append(order)
+                serialized_orders = json.dumps(orders)
+                return serialized_orders
             except sqlite3.Error as e:
                return f"Can't expand order\n {e}"
 
