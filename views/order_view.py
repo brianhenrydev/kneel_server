@@ -62,7 +62,7 @@ class OrderQuery(SqlQuery):
 
 
     def get_expanded_orders(self):
-        """Returns a list of orders with expanded foreign keys"""
+        """Returns a list of orders with size_id,style_id,metal_id foreign keys expanded"""
         with sqlite3.connect("./kneeldiamonds.db") as conn:
 
             conn.row_factory = sqlite3.Row
@@ -128,7 +128,7 @@ class OrderQuery(SqlQuery):
                return f"Can't expand order\n {e}"
 
     def get_expanded_styles(self):
-        """Returns a list of orders with expanded foreign keys"""
+        """Returns a list of orders with style_id foreign keys expanded """
         with sqlite3.connect("./kneeldiamonds.db") as conn:
 
             conn.row_factory = sqlite3.Row
@@ -174,7 +174,7 @@ class OrderQuery(SqlQuery):
                return f"Can't expand order\n {e}"
     
     def get_expanded_sizes(self):
-        """Returns a list of orders with expanded foreign keys"""
+        """Returns a list of orders with size_id foreign keys expanded """
         with sqlite3.connect("./kneeldiamonds.db") as conn:
 
             conn.row_factory = sqlite3.Row
@@ -220,7 +220,7 @@ class OrderQuery(SqlQuery):
                return f"Can't expand order\n {e}"
 
     def get_expanded_metals(self):
-        """Returns a list of orders with expanded foreign keys"""
+        """Returns a list of orders with metal_id foreign keys expanded """
         with sqlite3.connect("./kneeldiamonds.db") as conn:
 
             conn.row_factory = sqlite3.Row
