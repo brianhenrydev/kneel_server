@@ -5,12 +5,10 @@ from http.server import BaseHTTPRequestHandler
 
 class status(Enum):
     HTTP_405_CLIENT_ERROR_METHOD_NOT_ALLOWED = 405
-    
     HTTP_200_SUCCESS = 200
     HTTP_201_SUCCESS_CREATED = 201
     HTTP_204_SUCCESS_NO_RESPONSE_BODY = 204
     HTTP_418_CLIENT_ERROR_IM_A_TEAPOT = 418
-    
     HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA = 400
     HTTP_401_CLIENT_ERROR_UNAUTHORIZED = 401
     HTTP_403_CLIENT_ERROR_FORBIDDEN = 403
@@ -27,15 +25,17 @@ class RequestHandler(BaseHTTPRequestHandler):
 
     def response(self,body,status_code):
         """Response"""
-        self.set_res_code(status_code)
+        self.set_res_code(status_code.value)
 
         self.wfile.write(body.encode())
 
     def parse_url(self,path):
         """Parse url into resource and id"""
+
         parsed = urlparse(path)
         params = parsed.path.split('/')
         resource = params[1]
+
 
         url_dict = {
             "requested_resource": resource,
@@ -43,17 +43,15 @@ class RequestHandler(BaseHTTPRequestHandler):
             "pk": 0
         }
 
-        if parsed.query:
-            
-            query = parse_qs(parsed.query)
-            url_dict["query_params"] = query
-            try:
-                if "pk" in url_dict["query_params"]:
-                    pk = int(query["pk"][0])
-                    url_dict["pk"] = pk
-            except (IndexError, ValueError):
-                pass
-              
+        query = parse_qs(parsed.query)
+        url_dict["query_params"] = query
+
+        try:
+            pk = params[2]
+            pk = int(pk)
+            url_dict["pk"] = pk
+        except (IndexError, ValueError):
+            pass
         return url_dict
 
 

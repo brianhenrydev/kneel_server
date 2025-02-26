@@ -1,9 +1,9 @@
 #__init__.py for views
 
-from .order_view import get_all_orders,get_single_order,create_order,delete_order
+from .order_view import OrderQuery
 
-from .metal_view import get_metal,get_all_metals
+from .metal_view import MetalQuery
 
-from .size_view import get_all_sizes,get_size 
+from .size_view import SizeQuery
 
-from .style_view import get_all_styles,get_style
+from .style_view import StyleQuery
