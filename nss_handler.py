@@ -47,9 +47,14 @@ class RequestHandler(BaseHTTPRequestHandler):
         url_dict["query_params"] = query
 
         try:
-            pk = params[2]
-            pk = int(pk)
-            url_dict["pk"] = pk
+            if params[2]:
+                pk = params[2]
+                url_dict["pk"] = pk
+
+            if query:
+                pk = query["pk"][0]
+                url_dict["pk"] = pk
+
         except (IndexError, ValueError):
             pass
         return url_dict

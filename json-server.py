@@ -24,42 +24,43 @@ class JSONServer(RequestHandler):
 
         response_body = ""
         url = self.parse_url(self.path)
-        query_params = url["query_params"]
 
         if url["requested_resource"] == "orders":
-            if "pk" not in query_params:
+            if url["pk"] == 0:
                 response_body = OrderQuery().get_all_orders(url)
                 return self.response(response_body, status.HTTP_200_SUCCESS)
             else:
-                pk = query_params["pk"]
+                pk = url["pk"]
                 response_body = OrderQuery().get_single_order(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS)
 
         elif url["requested_resource"] == "metals":
 
-            if "pk" not in query_params:
+            if url["pk"] == 0:
                 response_body = MetalQuery().get_all_metals()
                 return self.response(response_body, status.HTTP_200_SUCCESS)
             else:
-                pk = query_params["pk"]
+                pk = url["pk"]
                 response_body = MetalQuery().get_metal(pk)
             return self.response(response_body, status.HTTP_200_SUCCESS)
+
         elif url["requested_resource"] == "styles":
 
-            if "pk" not in query_params:
+            if url["pk"] == 0:
                 response_body = StyleQuery().get_all_styles()
                 return self.response(response_body, status.HTTP_200_SUCCESS)
             else:
-                pk = query_params["pk"]
-                response_body = get_style(pk)
+                pk = url["pk"]
+                response_body = StyleQuery().get_style(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS)
+
         elif url["requested_resource"] == "sizes":
 
-            if "pk" not in query_params:
+            if url["pk"] == 0:
                 response_body = SizeQuery().get_table()
                 return self.response(response_body, status.HTTP_200_SUCCESS)
             else:
-                pk = query_params["pk"]
+                pk = url["pk"]
                 response_body = SizeQuery().get_item(pk)
                 return self.response(response_body, status.HTTP_200_SUCCESS)
 
@@ -88,25 +89,30 @@ class JSONServer(RequestHandler):
     def do_DELETE(self):
         # dict containing endpoint & query params from url
         url = self.parse_url(self.path)
-        params = url["query_params"]
 
         if url["requested_resource"] == "orders":
-            if "pk" in params:
-                pk = params["pk"]
+            if url["pk"] != 0:
+                return self.response(
+                    "you must supply a primary key",
+                    status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA,
+                )
+            else:
+                pk = url["pk"]
                 response = OrderQuery().delete_item(pk)
                 return self.response(response, status.HTTP_200_SUCCESS)
 
-            return self.response(
-                "No pk provided", status.HTTP_418_CLIENT_ERROR_IM_A_TEAPOT
-            )
-
     def do_PUT(self):
         url = self.parse_url(self.path)
-        content_length = int(self.headers.get("Content-Length"))
+        content_length = self.headers.get("Content-Length")
+        try:
+            content_length = int(content_length)
+        except ValueError:
+            return self.response(
+                "bad data", status.HTTP_400_CLIENT_ERROR_BAD_REQUEST_DATA
+            )
 
         post_body = self.rfile.read(content_length)
         post_data = post_body.decode("utf-8")
-
 
         updated_order = json.loads(post_data)
 
